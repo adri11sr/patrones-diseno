@@ -10,3 +10,72 @@
  * https://refactoring.guru/es/design-patterns/proxy
  *
  */
+
+import { COLORS } from "../helpers/colors.ts";
+
+class Player {
+    name:string;
+    level:number;
+
+    constructor(name:string, level:number){
+        this.level = level;
+        this.name =name;
+    }
+
+}
+
+interface Room {
+    enter(player:Player): void;
+}
+
+class SecrectRoom implements Room {
+
+  enter(player: Player): void {
+    console.log(`%cBienvenido a la sala secreta, ${player.name}`, COLORS.blue);
+    console.log(`%cUn gran enemigo te espera, ${player.name}`, COLORS.blue);
+  }
+    
+}
+
+
+// Clase Proxy - Magic portal
+class MagicPortal implements Room {
+
+    private secrectRoom:Room;
+
+    constructor(room:Room){
+        this.secrectRoom = room;
+    }
+
+  enter(player: Player): void {
+   
+    if(player.level >= 10){
+        this.secrectRoom.enter(player);
+        return;
+    }
+
+    console.log(`
+      %cLo siento ${player.name}, Tu nivel ${player.level}, es muy bajo, necesitas al menos level 10  
+    `, COLORS.red);
+    
+  }
+
+
+}
+
+function main (){
+
+    const portal = new MagicPortal(new SecrectRoom());
+
+    const player1 = new Player('Elend', 5);
+    const player2 = new Player('Vin', 15);
+
+    console.log('%cElend esta intentado entrar en el portal', COLORS.blue);
+    portal.enter(player1);
+
+    console.log('\n%cVin esta intentado entrar en el portal', COLORS.blue);
+    portal.enter(player2);
+
+}
+
+main();
